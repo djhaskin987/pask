@@ -1,4 +1,4 @@
-// Copyright © 2017 NAME HERE <EMAIL ADDRESS>
+// Copyright © 2017 Daniel Jay Haskin <djhaskin987@gmail.com>
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/fsnotify/fsnotify"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -37,10 +38,13 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	//	Run: func(cmd *cobra.Command, args []string) { },
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Printf("%v\n", viper.Get("file"))
+	},
 }
 
-// Execute adds all child commands to the root command and sets flags appropriately.
+// Execute adds all child commands to the root command and sets flags
+// appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	if err := RootCmd.Execute(); err != nil {
@@ -56,14 +60,15 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.pask.yaml)")
+	RootCmd.PersistentFlags().StringVar(&cfgFile,
+		"config", "", "config file (default is $HOME/.pask)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	RootCmd.Flags().StringP("basepath", "", "Base project path")
-	RootCmd.Flags().StringP("listfile", "./pask/packages.yml", "Install these")
-	RootCmd.Flags().StringP("valsfile", "./pask/config.yml", "Use these values")
+	RootCmd.Flags().StringP("basepath", "p", "", "Base project path")
+	RootCmd.Flags().StringP("file", "f", "-", "Look here for stuff")
+	viper.BindPFlags(RootCmd.Flags())
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -82,6 +87,14 @@ func initConfig() {
 		// Search config in home directory with name ".pask" (without extension).
 		viper.AddConfigPath(home)
 		viper.SetConfigName(".pask")
+		err = viper.ReadInConfig() // Find and read the config file
+		if err != nil {            // Handle errors reading the config file
+			panic(fmt.Errorf("Fatal error config file: %s \n", err))
+		}
+		viper.WatchConfig()
+		viper.OnConfigChange(func(e fsnotify.Event) {
+			viper.ReadInConfig()
+		})
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match

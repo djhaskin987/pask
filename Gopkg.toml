@@ -66,3 +66,7 @@
 [[dependencies]]
   branch = "master"
   name = "github.com/spf13/viper"
+
+[[dependencies]]
+  branch = "master"
+  name = "github.com/fsnotify/fsnotify"
