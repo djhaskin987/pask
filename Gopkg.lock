@@ -1,0 +1,97 @@
+memo = "d146d1f907ed90b7f452df0dbd11dcdfaf27b64b8bec7ca18eb58c4a048740cb"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/fsnotify/fsnotify"
+  packages = ["."]
+  revision = "4da3e2cfbabc9f751898f250b49f2439785783a1"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/hashicorp/hcl"
+  packages = [".","hcl/ast","hcl/parser","hcl/scanner","hcl/strconv","hcl/token","json/parser","json/scanner","json/token"]
+  revision = "68e816d1c783414e79bc65b3994d9ab6b0a722ab"
+
+[[projects]]
+  name = "github.com/inconshreveable/mousetrap"
+  packages = ["."]
+  revision = "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75"
+  version = "v1.0"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/magiconair/properties"
+  packages = ["."]
+  revision = "8d7837e64d3c1ee4e54a880c5a920ab4316fc90a"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/mitchellh/go-homedir"
+  packages = ["."]
+  revision = "b8bc1bf767474819792c23f32d8286a45736f1c6"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/mitchellh/mapstructure"
+  packages = ["."]
+  revision = "d0303fe809921458f417bcf828397a65db30a7e4"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/pelletier/go-toml"
+  packages = ["."]
+  revision = "1d6b12b7cb290426e27e6b4e38b89fcda3aeef03"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/spf13/afero"
+  packages = [".","mem"]
+  revision = "ee1bd8ee15a1306d1f9201acc41ef39cd9f99a1b"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/spf13/cast"
+  packages = ["."]
+  revision = "acbeb36b902d72a7a4c18e8f3241075e7ab763e4"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/spf13/cobra"
+  packages = ["."]
+  revision = "b78744579491c1ceeaaa3b40205e56b0591b93a3"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/spf13/jwalterweatherman"
+  packages = ["."]
+  revision = "12bd96e66386c1960ab0f74ced1362f66f552f7b"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/spf13/pflag"
+  packages = ["."]
+  revision = "7aff26db30c1be810f9de5038ec5ef96ac41fd7c"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/spf13/viper"
+  packages = ["."]
+  revision = "25b30aa063fc18e48662b86996252eabdcf2f0c7"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/sys"
+  packages = ["unix"]
+  revision = "b6e1ae21643682ce023deb8d152024597b0e9bb4"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/text"
+  packages = ["internal/gen","internal/triegen","internal/ucd","transform","unicode/cldr","unicode/norm"]
+  revision = "1cbadb444a806fd9430d14ad08967ed91da4fa0a"
+
+[[projects]]
+  branch = "v2"
+  name = "gopkg.in/yaml.v2"
+  packages = ["."]
+  revision = "eb3733d160e74a9c7e442f435eb3bea458e1d19f"

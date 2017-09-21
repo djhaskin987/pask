@@ -1,0 +1,10 @@
+# Golang
+vendor/
+/pask
+
+# Editor save files
+\#*
+.#*
+.*#
+*~
+.*.sw[a-z]
