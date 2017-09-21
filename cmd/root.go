@@ -16,12 +16,12 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-
 	"github.com/fsnotify/fsnotify"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"log"
+	"os"
 )
 
 var cfgFile string
@@ -87,9 +87,17 @@ func initConfig() {
 		// Search config in home directory with name ".pask" (without extension).
 		viper.AddConfigPath(home)
 		viper.SetConfigName(".pask")
-		err = viper.ReadInConfig() // Find and read the config file
-		if err != nil {            // Handle errors reading the config file
-			panic(fmt.Errorf("Fatal error config file: %s \n", err))
+		viper.SetConfigType("toml")
+
+		// In the succeeding line, the reader will note that
+		// ReadInConfig returns an error, and I am intentionally
+		// ignoring it.
+		//
+		// If the config file couldn't be read, *I don't care*. But
+		// if it can be, it should be.
+		err = viper.ReadInConfig()
+		if err != nil {
+			log.Fatalln("AAAAH ", err)
 		}
 		viper.WatchConfig()
 		viper.OnConfigChange(func(e fsnotify.Event) {
