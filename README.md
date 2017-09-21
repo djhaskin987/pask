@@ -1,0 +1,10 @@
+- If there's a ./pask/preinst, run it
+- Unzip over top (Except for pask folder, if any)
+  - Error on any overwriting
+- Render it
+  - If there's a ./pask/defaults.yaml, merge values.yaml on top of it
+- If there's a ./pask/postinst in the archive, run it
+- After all are installed, run each one's ./pask/task (if any)
+- Get list of pakcages from YAML or text file
+  - If txt file, use last space-separated field to get package
+- Get list of 
