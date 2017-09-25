@@ -29,13 +29,9 @@ var cfgFile string
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
 	Use:   "pask",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "PAcKaged tASKs",
+	Long: `Install files and run tasks for the purpose of making your build
+less painful and more fun!`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
@@ -60,8 +56,8 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
-	RootCmd.PersistentFlags().StringVar(&cfgFile,
-		"config", "", "config file (default is $HOME/.pask)")
+	RootCmd.PersistentFlags().StringVarP(&cfgFile,
+		"config", "c", "", "config file (default is $HOME/.pask)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
@@ -97,7 +93,7 @@ func initConfig() {
 		// if it can be, it should be.
 		err = viper.ReadInConfig()
 		if err != nil {
-			log.Fatalln("AAAAH ", err)
+			log.Println("Error reading config file: ", err)
 		}
 		viper.WatchConfig()
 		viper.OnConfigChange(func(e fsnotify.Event) {
