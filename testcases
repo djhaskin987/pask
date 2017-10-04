@@ -1,0 +1,11 @@
+- when installing:
+  - If file is already present
+  - if a directory is present where a file should be
+  - vice versa
+  - if a directory is present wehere a directory should be but w/ wrong perms
+  - if a directory is present wehere a directory should be but w/ correct perms
+  - if a long named file is present in the tar archive
+  - if a symlink is unarchived right
+  - if a symlink to a longly named file (> 256 chars) is archived
+  - if pask files are put int he proper place
+  - was postinstall task run?
