@@ -62,8 +62,9 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	RootCmd.Flags().StringP("basepath", "p", "", "Base project path")
-	RootCmd.Flags().StringP("file", "f", "-", "Look here for stuff")
+	RootCmd.Flags().StringP("basepath", "p", "./", "Base project path")
+	RootCmd.Flags().StringP("specfile", "s", "" "Look here for stuff")
+	RootCmd.Flags().StringP("statefile", "S", "", "Look here for stuff")
 	viper.BindPFlags(RootCmd.Flags())
 }
 
