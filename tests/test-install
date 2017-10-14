@@ -1,0 +1,21 @@
+#!/bin/sh
+set -e
+export POSIXLY_CORRECT=1
+
+
+root_path=${PWD}
+
+if [ ! -f "${root_path}/pask.go" ]
+then
+    echo "Must be run from the root of the repo." >&2
+    exit 1
+fi
+
+data_path=${root_path}/testdata
+tmp_path=$(mktemp -d -p "${data_path}")
+
+cd "${data_path}"
+
+
+
+${root_path}/pask install 
