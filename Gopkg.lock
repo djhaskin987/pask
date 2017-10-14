@@ -1,4 +1,4 @@
-memo = "f8e49f59c016879b6484fb48307a4f388b571da92b724e678231e7303ce4c5cd"
+memo = "cf8422babb1bff4833854161ed8b06e8fd50c97a74e5c78cf103b08e7971b5ba"
 
 [[projects]]
   branch = "master"
@@ -77,6 +77,12 @@ memo = "f8e49f59c016879b6484fb48307a4f388b571da92b724e678231e7303ce4c5cd"
   name = "github.com/spf13/viper"
   packages = ["."]
   revision = "25b30aa063fc18e48662b86996252eabdcf2f0c7"
+
+[[projects]]
+  name = "github.com/ulikunitz/xz"
+  packages = [".","internal/hash","internal/xlog","lzma"]
+  revision = "0c6b41e72360850ca4f98dc341fd999726ea007f"
+  version = "v0.5.4"
 
 [[projects]]
   branch = "master"

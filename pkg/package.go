@@ -14,21 +14,33 @@
 package pkg
 
 import (
-	"archive/zip"
-	"errors"
+	"archive/tar"
 	"fmt"
+	"github.com/hashicorp/hcl"
 	"github.com/ulikunitz/xz"
 	"io"
-	"net"
+	"io/ioutil"
+	"net/http"
 	"net/url"
+	"os"
 	"path"
-	"re"
+	"regexp"
+	"strings"
 )
 
+type Pask interface {
+	Install(root string) error
+	Run(root string, task string) error
+}
+
 type Package struct {
-	Name     string `yaml:"name"`
-	Version  string `yaml:"version"`
-	Location string `yaml:"location"`
+	Name     string `hcl:"name"`
+	Version  string `hcl:"version"`
+	Location string `hcl:"location"`
+}
+
+type Spec struct {
+	Packages []Package `hcl:"packages"`
 }
 
 // Name of the directory relative to the root where control files will
@@ -74,22 +86,19 @@ func openArchive(archive string) (io.ReadCloser, error) {
 	return r, nil
 }
 
-func untar(r io.Reader) (io.Reader, error) {
+func openTar(r io.Reader) (*tar.Reader, error) {
 	// Decompress the stream
 	if xzReader, err := xz.NewReader(r); err != nil {
-		return r, err
+		return nil, err
 	} else {
 		// Untar the stream
-		if tarReader, err := tar.NewReader(xzReader); err != nil {
-			return xzReader, err
-		} else {
-			return tarReader, nil
-		}
+		tarReader := tar.NewReader(xzReader)
+		return tarReader, nil
 	}
 }
 
-func unpack(tarReader io.Reader, name string, version string, root string) error {
-	findPaskFiles := re.MustCompile("^/*" + ControlDirectory + "/+")
+func (p *Package) unpack(tarReader *tar.Reader, root string) error {
+	findPaskFiles := regexp.MustCompile("^/*" + ControlDirectory + "/+")
 	for {
 		header, err := tarReader.Next()
 		if err == io.EOF {
@@ -102,7 +111,8 @@ func unpack(tarReader io.Reader, name string, version string, root string) error
 
 		var dest string
 		if results := findPaskFiles.FindStringSubmatch(header.Name); results != nil {
-			dest = path.Join(root, ControlDirectory, "packages", name, version)
+			dest = path.Join(root, ControlDirectory, "packages", p.Name,
+				p.Version)
 		} else {
 			dest = path.Join(root, header.Name)
 		}
@@ -159,6 +169,7 @@ func unpack(tarReader io.Reader, name string, version string, root string) error
 			continue
 		}
 	}
+	return nil
 }
 
 // Accepts a UTF-8 encoded archive name.
@@ -169,21 +180,30 @@ func unpack(tarReader io.Reader, name string, version string, root string) error
 // Runs the `postinst` task, if it exists, after installation is complete.
 // TODO: add logging
 func (p *Package) Install(root string) error {
-	var tarReader io.Reader
+
+	var tarReader *tar.Reader
 
 	if rc, err := openArchive(p.Location); err != nil {
 		return err
 	} else {
 		defer rc.Close()
-		if r, err := untar(rc); err != nil {
+		if r, err := openTar(rc); err != nil {
 			return err
 		} else {
 			tarReader = r
 		}
 	}
-	if err := unpack(tarReader, name, version, root); err != nil {
+	if err := p.unpack(tarReader, root); err != nil {
 		return err
 	}
+
+	if err := p.Run(root, "pretmpl"); err != nil {
+		return err
+	}
+
+	/*	if err := p.Template(); err != nil {
+		return err
+	} */
 
 	// TODO: Templating?
 
@@ -200,4 +220,34 @@ func (p *Package) Install(root string) error {
 // the way.
 func (p *Package) Run(root string, task string) error {
 	return nil
+}
+
+func (s *Spec) Run(root string, task string) error {
+	for _, pkg := range s.Packages {
+		if err := pkg.Run(root, task); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (s *Spec) Install(root string) error {
+	for _, pkg := range s.Packages {
+		if err := pkg.Install(root); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func ReadSpec(sfile string) (*Spec, error) {
+	var spec Spec
+	if specData, err := ioutil.ReadFile(sfile); err != nil {
+		return nil, fmt.Errorf("Couldn't read spec")
+	} else {
+		if err := hcl.Unmarshal(specData, &spec); err != nil {
+			return nil, fmt.Errorf("Couldn't parse spec file: %v", err)
+		}
+	}
+	return &spec, nil
 }

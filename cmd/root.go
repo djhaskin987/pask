@@ -15,13 +15,13 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/fsnotify/fsnotify"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"log"
 	"os"
+	"path"
 )
 
 var cfgFile string
@@ -30,13 +30,13 @@ var cfgFile string
 var RootCmd = &cobra.Command{
 	Use:   "pask",
 	Short: "PAcKaged tASKs",
-	Long: `Install files and run tasks for the purpose of making your build
+	Long: `Install files and run tasks. Make your build
 less painful and more fun!`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("%v\n", viper.Get("file"))
-	},
+	//	Run: func(cmd *cobra.Command, args []string) {
+	//		fmt.Printf("%v\n", viper.Get("spec"))
+	//	},
 }
 
 // Execute adds all child commands to the root command and sets flags
@@ -44,8 +44,7 @@ less painful and more fun!`,
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	if err := RootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatalln(err)
 	}
 }
 
@@ -61,11 +60,23 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	RootCmd.Flags().StringP("basepath", "p", "./", "Base project path")
-	RootCmd.Flags().StringP("specfile", "s", "" "Look here for stuff")
-	RootCmd.Flags().StringP("statefile", "S", "", "Look here for stuff")
-	viper.BindPFlags(RootCmd.Flags())
+
+	RootCmd.PersistentFlags().StringP("base", "p", "./", "Base project path")
+	viper.BindPFlag("base", RootCmd.Flags().Lookup("base"))
+	var baseDefault string
+	if pwd, err := os.Getwd(); err != nil {
+		baseDefault = "."
+	} else {
+		baseDefault = pwd
+	}
+	viper.SetDefault("base", baseDefault)
+
+	RootCmd.PersistentFlags().StringP("spec", "s", "", "Pask spec file")
+
+	viper.BindPFlag("spec", RootCmd.PersistentFlags().Lookup("spec"))
+	viper.SetDefault("spec", path.Join(baseDefault,
+		"pask",
+		"spec.hcl"))
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -77,8 +88,7 @@ func initConfig() {
 		// Find home directory.
 		home, err := homedir.Dir()
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			log.Fatalln(err)
 		}
 
 		// Search config in home directory with name ".pask" (without extension).
@@ -106,6 +116,6 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
+		log.Println("Using config file:", viper.ConfigFileUsed())
 	}
 }
