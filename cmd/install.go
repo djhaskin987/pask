@@ -31,10 +31,15 @@ Any files in the "pask" folder inside the zip archives are treated specially,
 and templating, pre-scripts and post-scripts are possible.
 See the docs at pask.readthedocs.io.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if spec, err := pkg.ReadSpec(viper.Get("spec").(string)); err != nil {
+		spec := viper.Get("spec").(string)
+		base := viper.Get("base").(string)
+		log.Println("Installing packages...")
+		log.Println("Using spec file `", spec, "`")
+		log.Println("Using base directory `", base, "`")
+		if spec, err := pkg.ReadSpec(spec); err != nil {
 			log.Fatalln("Error reading spec file: ", err)
 		} else {
-			spec.Install(viper.Get("base").(string))
+			spec.Install(base)
 		}
 	},
 }

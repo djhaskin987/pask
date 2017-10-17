@@ -1,5 +1,5 @@
 #!/bin/sh
-set -e
+set -ex
 export POSIXLY_CORRECT=1
 
 
@@ -12,10 +12,78 @@ then
 fi
 
 data_path=${root_path}/testdata
-tmp_path=$(mktemp -d -p "${data_path}")
+tmp_path=$( mktemp -d -p "${data_path}")
+a_staging_path="${tmp_path}/a_staging"
+mkdir -p "${a_staging_path}"
+b_staging_path="${tmp_path}/b_staging"
+mkdir -p "${b_staging_path}"
+tar_path="${tmp_path}/tar"
+mkdir -p "${tar_path}"
+install_path="${tmp_path}/install"
+mkdir -p "${install_path}"
 
-cd "${data_path}"
+cd "${a_staging_path}"
 
+reaally_long_path="aaaaaaaaaa/bbbbbbbbbb/cccccccccc/dddddddddd/eeeeeeeeee/ffffffffff/gggggggggg/hhhhhhhhhh/iiiiiiiiii/jjjjjjjjjj/kkkkkkkkkk/llllllllll/mmmmmmmmmm/nnnnnnnnnn/oooooooooo/pppppppppp/qqqqqqqqqq/rrrrrrrrrr/ssssssssss/tttttttttt/uuuuuuuuuu/vvvvvvvvvv/wwwwwwwwww/xxxxxxxxxx/yyyyyyyyyy/zzzzzzzzz"
+mkdir -p "${reaally_long_path}"
+touch "${reaally_long_path}/hi"
+mkdir -p "pask/tasks/"
+cat > pask/tasks/compile << COMPILE
+#!/bin/sh
 
+echo 'FIRE ONE!'
+COMPILE
+chmod a+x pask/tasks/compile
 
-${root_path}/pask install 
+tar cJf "${tar_path}/first.tar.xz" $(ls -1A)
+
+cd "${b_staging_path}"
+reallly_long_file="aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeeeffffffffffgggggggggghhhhhhhhhhiiiiiiiiiijjjjjjjjjjkkkkkkkkkkllllllllllmmmmmmmmmmnnnnnnnnnnooooooooooppppppppppqqqqqqqqqqrrrrrrrrrrssssssssssttttttttttuuuuuuuuuuvvvvvvvvvvwwwwwwwwwwxxxxxxxxxxyyyyyyyyyyzzzz"
+mkdir -p "exclam"
+echo "bazinga!" > "exclam/${reallly_long_file}"
+mkdir -p "pask/tasks"
+cat > pask/tasks/compile << COMPILE
+#!/bin/sh
+
+echo 'FIRE TWO!'
+COMPILE
+
+cat > pask/tasks/onlymine << ONLYMINE
+#!/bin/sh
+
+echo 'MINE!'
+ONLYMINE
+
+chmod a+x pask/tasks/onlymine
+chmod a+x pask/tasks/compile
+
+${root_path}/pask install
+
+tar cJf "${tar_path}/second.tar.xz" $(ls -1A)
+
+cd "${tar_path}"
+
+tar tJf "${tar_path}/first.tar.xz"
+tar tJf "${tar_path}/second.tar.xz"
+
+cd "${install_path}"
+
+mkdir -p "${install_path}/pask"
+cat > "${install_path}/pask/spec.hcl" <<SPEC
+{
+    "packages": [
+        {
+            "name": "first",
+            "version": "1.0",
+            "location": "file://${tar_path}/first.tar.xz"
+        },
+        {
+            "name": "second",
+            "version": "1.0",
+            "location": "file://${tar_path}/second.tar.xz"
+        }
+    ]
+}
+SPEC
+
+"${root_path}/pask" install
