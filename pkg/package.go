@@ -20,6 +20,7 @@ import (
 	"github.com/ulikunitz/xz"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -233,6 +234,8 @@ func (s *Spec) Run(root string, task string) error {
 
 func (s *Spec) Install(root string) error {
 	for _, pkg := range s.Packages {
+		log.Printf("Installing archive `%s` from location `%s`\n",
+			pkg.Name, pkg.Location)
 		if err := pkg.Install(root); err != nil {
 			return err
 		}

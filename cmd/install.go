@@ -34,11 +34,12 @@ See the docs at pask.readthedocs.io.`,
 		spec := viper.Get("spec").(string)
 		base := viper.Get("base").(string)
 		log.Println("Installing packages...")
-		log.Println("Using spec file `", spec, "`")
-		log.Println("Using base directory `", base, "`")
+		log.Printf("Using spec file `%s`\n", spec)
+		log.Println("Using project base `%s`\n", base)
 		if spec, err := pkg.ReadSpec(spec); err != nil {
-			log.Fatalln("Error reading spec file: ", err)
+			log.Fatalln("Error reading spec file:", err)
 		} else {
+			log.Printf("Using base directory `%s`\n", base)
 			spec.Install(base)
 		}
 	},

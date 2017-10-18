@@ -62,7 +62,7 @@ func init() {
 	// when this action is called directly.
 
 	RootCmd.PersistentFlags().StringP("base", "p", "./", "Base project path")
-	viper.BindPFlag("base", RootCmd.Flags().Lookup("base"))
+	viper.BindPFlag("base", RootCmd.PersistentFlags().Lookup("base"))
 	var baseDefault string
 	if pwd, err := os.Getwd(); err != nil {
 		baseDefault = "."
@@ -72,7 +72,6 @@ func init() {
 	viper.SetDefault("base", baseDefault)
 
 	RootCmd.PersistentFlags().StringP("spec", "s", "", "Pask spec file")
-
 	viper.BindPFlag("spec", RootCmd.PersistentFlags().Lookup("spec"))
 	viper.SetDefault("spec", path.Join(baseDefault,
 		"pask",

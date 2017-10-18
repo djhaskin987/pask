@@ -38,7 +38,7 @@ chmod a+x pask/tasks/compile
 tar cJf "${tar_path}/first.tar.xz" $(ls -1A)
 
 cd "${b_staging_path}"
-reallly_long_file="aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeeeffffffffffgggggggggghhhhhhhhhhiiiiiiiiiijjjjjjjjjjkkkkkkkkkkllllllllllmmmmmmmmmmnnnnnnnnnnooooooooooppppppppppqqqqqqqqqqrrrrrrrrrrssssssssssttttttttttuuuuuuuuuuvvvvvvvvvvwwwwwwwwwwxxxxxxxxxxyyyyyyyyyyzzzz"
+reallly_long_file="aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeeeffffffffffgggggggggghhhhhhhhhhiiiiiiiiiijjjjjjjjjjkkkkkkkkkkllllllllllmmmmmmmmmmnnnnnnnnnnooooooooooppppppppppqqqqqqqqqqrrrrrrrrrrssssssssssttttttttttuuuuuuuuuuvvvvvvvvvvwwwwwwwwwwxxxxxxxxxxyyyyyyyyyyzzzzz"
 mkdir -p "exclam"
 echo "bazinga!" > "exclam/${reallly_long_file}"
 mkdir -p "pask/tasks"
@@ -56,8 +56,6 @@ ONLYMINE
 
 chmod a+x pask/tasks/onlymine
 chmod a+x pask/tasks/compile
-
-${root_path}/pask install
 
 tar cJf "${tar_path}/second.tar.xz" $(ls -1A)
 
