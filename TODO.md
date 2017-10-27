@@ -1,0 +1,14 @@
+- Test overwrite of directory with file
+- Test overwrite of file with directory
+- Test writing out of symlink
+- Test overwrite of symlink with file
+- Test overwrite of file with symlink
+- Test overwrite of symlink with directory
+- Test overwrite of directory with symlink
+- Test running of tasks
+- Add environment variables to running of task:
+   - PASK\_PACKAGE\_NAME
+   - PASK\_PACKAGE\_VERSION
+   - PASK\_TASK
+   - PASK\_PROJECT\_BASE
+- Test that those variables (and others) are getting through
