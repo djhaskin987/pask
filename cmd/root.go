@@ -75,7 +75,7 @@ func init() {
 	viper.BindPFlag("spec", RootCmd.PersistentFlags().Lookup("spec"))
 	viper.SetDefault("spec", path.Join(baseDefault,
 		"pask",
-		"spec.hcl"))
+		"spec.yml"))
 }
 
 // initConfig reads in config file and ENV variables if set.

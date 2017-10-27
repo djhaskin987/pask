@@ -38,9 +38,12 @@ chmod a+x pask/tasks/compile
 tar cJf "${tar_path}/first.tar.xz" $(ls -1A)
 
 cd "${b_staging_path}"
-reallly_long_file="aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeeeffffffffffgggggggggghhhhhhhhhhiiiiiiiiiijjjjjjjjjjkkkkkkkkkkllllllllllmmmmmmmmmmnnnnnnnnnnooooooooooppppppppppqqqqqqqqqqrrrrrrrrrrssssssssssttttttttttuuuuuuuuuuvvvvvvvvvvwwwwwwwwwwxxxxxxxxxxyyyyyyyyyyzzzzz"
+normal_file="norm/al/abcde"
+reallly_long_file="exclam/aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeeeffffffffffgggggggggghhhhhhhhhhiiiiiiiiiijjjjjjjjjjkkkkkkkkkkllllllllllmmmmmmmmmmnnnnnnnnnnooooooooooppppppppppqqqqqqqqqqrrrrrrrrrrssssssssssttttttttttuuuuuuuuuuvvvvvvvvvvwwwwwwwwwwxxxxxxxxxxyyyyyyyyyyzzzzz"
 mkdir -p "exclam"
-echo "bazinga!" > "exclam/${reallly_long_file}"
+mkdir -p "norm/al"
+echo "bazinga!" > "${reallly_long_file}"
+echo "normal" > "${normal_file}"
 mkdir -p "pask/tasks"
 cat > pask/tasks/compile << COMPILE
 #!/bin/sh
@@ -67,21 +70,31 @@ tar tJf "${tar_path}/second.tar.xz"
 cd "${install_path}"
 
 mkdir -p "${install_path}/pask"
-cat > "${install_path}/pask/spec.hcl" <<SPEC
+cat > "${install_path}/pask/spec.yml" <<SPEC
 {
     "packages": [
         {
             "name": "first",
             "version": "1.0",
             "location": "file://${tar_path}/first.tar.xz"
-        },
-        {
-            "name": "second",
-            "version": "1.0",
-            "location": "file://${tar_path}/second.tar.xz"
         }
-    ]
+     ]
 }
 SPEC
+#        {
+#            "name": "second",
+#            "version": "1.0",
+#            "location": "file://${tar_path}/second.tar.xz"
+#        }
+#    ]
 
 "${root_path}/pask" install
+
+if [ ! -f "${reallly_long_file}" ]
+then
+    echo "${reallly_long_file} is not present" >&2
+    exit 1
+fi
+
+
+

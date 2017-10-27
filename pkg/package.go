@@ -16,8 +16,8 @@ package pkg
 import (
 	"archive/tar"
 	"fmt"
-	"github.com/hashicorp/hcl"
 	"github.com/ulikunitz/xz"
+	"gopkg.in/yaml.v2"
 	"io"
 	"io/ioutil"
 	"log"
@@ -35,13 +35,13 @@ type Pask interface {
 }
 
 type Package struct {
-	Name     string `hcl:"name"`
-	Version  string `hcl:"version"`
-	Location string `hcl:"location"`
+	Name     string `yaml:"name"`
+	Version  string `yaml:"version"`
+	Location string `yaml:"location"`
 }
 
 type Spec struct {
-	Packages []Package `hcl:"packages"`
+	Packages []Package `yaml:"packages"`
 }
 
 // Name of the directory relative to the root where control files will
@@ -60,7 +60,7 @@ func openArchive(archive string) (io.ReadCloser, error) {
 
 	// verify that the path ends in ".tar.xz", otherwise give error
 	if !strings.HasSuffix(urlParts.Path, ".tar.xz") {
-		return nil, fmt.Errorf("Unsupported archive type (not *.tar.xz): %s",
+		return nil, fmt.Errorf("Unsupported archive type (not *.tar.xz): `%s`",
 			path.Base(urlParts.Path))
 	}
 
@@ -81,7 +81,7 @@ func openArchive(archive string) (io.ReadCloser, error) {
 		}
 
 	default:
-		return nil, fmt.Errorf("Unsupported URL type: %s", urlParts.Scheme)
+		return nil, fmt.Errorf("Unsupported URL type: `%s`", urlParts.Scheme)
 	}
 
 	return r, nil
@@ -117,6 +117,8 @@ func (p *Package) unpack(tarReader *tar.Reader, root string) error {
 		} else {
 			dest = path.Join(root, header.Name)
 		}
+
+		log.Printf("Attempting to unpack file `%s`\n", dest)
 
 		mode := header.FileInfo().Mode()
 		if len(dest) == 0 {
@@ -183,7 +185,7 @@ func (p *Package) unpack(tarReader *tar.Reader, root string) error {
 func (p *Package) Install(root string) error {
 
 	var tarReader *tar.Reader
-
+	log.Printf("Opening archive at `%s`\n", p.Location)
 	if rc, err := openArchive(p.Location); err != nil {
 		return err
 	} else {
@@ -234,6 +236,7 @@ func (s *Spec) Run(root string, task string) error {
 
 func (s *Spec) Install(root string) error {
 	for _, pkg := range s.Packages {
+		log.Printf("Installing `%s`\n", pkg)
 		log.Printf("Installing archive `%s` from location `%s`\n",
 			pkg.Name, pkg.Location)
 		if err := pkg.Install(root); err != nil {
@@ -248,9 +251,11 @@ func ReadSpec(sfile string) (*Spec, error) {
 	if specData, err := ioutil.ReadFile(sfile); err != nil {
 		return nil, fmt.Errorf("Couldn't read spec")
 	} else {
-		if err := hcl.Unmarshal(specData, &spec); err != nil {
+		if err := json.Unmarshal(specData, &spec); err != nil {
 			return nil, fmt.Errorf("Couldn't parse spec file: %v", err)
 		}
+		log.Printf("Spec input is as follows:\n\n%s\n", specData)
+		log.Printf("Spec is as follows:\n\n%s\n", spec)
 	}
 	return &spec, nil
 }

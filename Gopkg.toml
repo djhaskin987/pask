@@ -52,6 +52,10 @@
 
 
 [[dependencies]]
+  branch = "master"
+  name = "github.com/fsnotify/fsnotify"
+
+[[dependencies]]
   name = "github.com/inconshreveable/mousetrap"
   version = "^1.0.0"
 
@@ -68,5 +72,9 @@
   name = "github.com/spf13/viper"
 
 [[dependencies]]
-  branch = "master"
-  name = "github.com/fsnotify/fsnotify"
+  name = "github.com/ulikunitz/xz"
+  version = ">=0.5.4, <1.0.0"
+
+[[dependencies]]
+  branch = "v2"
+  name = "gopkg.in/yaml.v2"
