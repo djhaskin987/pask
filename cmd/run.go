@@ -15,20 +15,36 @@
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/djhaskin987/pask/pkg"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"log"
 )
 
 // runCmd represents the run command
 var runCmd = &cobra.Command{
+	Args:  cobra.MinimumNArgs(1),
 	Use:   "run TASK",
 	Short: "Run a packaged task",
 	Long: `Calls any executable file called TASK found in the folder
 "<root-path>/pask/<pkg>/<vers>/tasks". Treats each package folder in order
 of appearance of the packages under the "packages" key in the spec file.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("run called")
+		spec := viper.Get("spec").(string)
+		base := viper.Get("base").(string)
+		log.Println("Running packaged tasks...")
+		log.Printf("Using spec file `%s`\n", spec)
+		log.Println("Using project base `%s`\n", base)
+		if spec, err := pkg.ReadSpec(spec); err != nil {
+			log.Fatalln("Error reading spec file:", err)
+		} else {
+			log.Printf("Using base directory `%s`\n", base)
+			for _, task := range args {
+				if err := spec.Run(base, task); err != nil {
+					log.Fatalf("Problem running task `%s`: `%s`\n", task, err)
+				}
+			}
+		}
 	},
 }
 

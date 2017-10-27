@@ -100,3 +100,19 @@ then
     echo "${install_path}/pask/packages/second/1.0/tasks/compile is not present" >&2
     exit 1
 fi
+
+# we make sure you can do it twice
+"${root_path}/pask" install
+
+if [ ! -f "${reallly_long_file}" ]
+then
+    echo "${reallly_long_file} is not present" >&2
+    exit 1
+fi
+
+if [ ! -f "${install_path}/pask/packages/second/1.0/tasks/compile" ]
+then
+    echo "${install_path}/pask/packages/second/1.0/tasks/compile is not present" >&2
+    exit 1
+fi
+

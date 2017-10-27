@@ -15,6 +15,7 @@ package pkg
 
 import (
 	"archive/tar"
+	"bytes"
 	"fmt"
 	"github.com/ulikunitz/xz"
 	"gopkg.in/yaml.v2"
@@ -24,6 +25,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"os/exec"
 	"path"
 	"regexp"
 	"strings"
@@ -152,7 +154,14 @@ func (p *Package) unpack(tarReader *tar.Reader, root string) error {
 			// Perhaps it is far cleaner and smoother in my
 			// use case to blow away what's there (if anything)
 			// and not apologize for it.
-			if fi, err := os.Stat(dest); err == nil {
+			if fi, err := os.Stat(dest); err != nil {
+				if os.IsNotExist(err) {
+					// Yay!
+				} else {
+					return err
+				}
+			} else {
+				// Get rid of old garbage
 				if fi.IsDir() {
 					os.RemoveAll(dest)
 				} else {
@@ -225,6 +234,36 @@ func (p *Package) Install(root string) error {
 // executable, run it. If it is not, return an error. Return any errors along
 // the way.
 func (p *Package) Run(root string, task string) error {
+	exe := path.Join(root, ControlDirectory, "packages", p.Name,
+		p.Version, "tasks", task)
+	if _, err := os.Stat(exe); err != nil {
+		if os.IsNotExist(err) {
+			log.Printf("WARNING: No task `%s` for package `%s` at version `%s`\n",
+				task, p.Name, p.Version)
+			// Ignore this when it happens :)
+		} else {
+			return err
+		}
+	} else {
+		log.Printf("Running task `%s` in package `%s` at version `%s`...\n",
+			task, p.Name, p.Version)
+		cmd := exec.Command(task)
+		var stdout bytes.Buffer
+		var stderr bytes.Buffer
+		cmd.Stdout = &stdout
+		cmd.Stderr = &stderr
+		if err := cmd.Run(); err != nil {
+			log.Fatal(err)
+		} else {
+			log.Println("Task run successful.")
+			if len(stdout.String()) > 0 {
+				log.Println("\tStandard Output:\n%s\n\n", stdout.String())
+			}
+			if len(stderr.String()) > 0 {
+				log.Println("\tStandard Error:\n%s\n\n", stderr.String())
+			}
+		}
+	}
 	return nil
 }
 
