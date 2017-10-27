@@ -18,7 +18,6 @@ import (
 	"github.com/djhaskin987/pask/pkg"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"gopkg.in/yaml.v2"
 	"log"
 )
 
@@ -42,7 +41,7 @@ See the docs at pask.readthedocs.io.`,
 		} else {
 			log.Printf("Using base directory `%s`\n", base)
 			if err := spec.Install(base); err != nil {
-				log.Fatalln("Problem installing: `%s`\n", err)
+				log.Fatalf("Problem installing: `%s`\n", err)
 			}
 		}
 	},

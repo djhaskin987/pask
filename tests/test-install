@@ -77,16 +77,15 @@ cat > "${install_path}/pask/spec.yml" <<SPEC
             "name": "first",
             "version": "1.0",
             "location": "file://${tar_path}/first.tar.xz"
+        },
+        {
+            "name": "second",
+            "version": "1.0",
+            "location": "file://${tar_path}/second.tar.xz"
         }
      ]
 }
 SPEC
-#        {
-#            "name": "second",
-#            "version": "1.0",
-#            "location": "file://${tar_path}/second.tar.xz"
-#        }
-#    ]
 
 "${root_path}/pask" install
 
@@ -96,5 +95,8 @@ then
     exit 1
 fi
 
-
-
+if [ ! -f "${install_path}/pask/packages/second/1.0/tasks/compile" ]
+then
+    echo "${install_path}/pask/packages/second/1.0/tasks/compile is not present" >&2
+    exit 1
+fi

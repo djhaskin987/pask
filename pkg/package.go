@@ -112,8 +112,9 @@ func (p *Package) unpack(tarReader *tar.Reader, root string) error {
 
 		var dest string
 		if results := findPaskFiles.FindStringSubmatch(header.Name); results != nil {
+			relativeDest := findPaskFiles.ReplaceAllString(header.Name, "")
 			dest = path.Join(root, ControlDirectory, "packages", p.Name,
-				p.Version)
+				p.Version, relativeDest)
 		} else {
 			dest = path.Join(root, header.Name)
 		}
@@ -127,7 +128,15 @@ func (p *Package) unpack(tarReader *tar.Reader, root string) error {
 
 		switch header.Typeflag {
 		case tar.TypeDir:
-			if fi, err := os.Stat(dest); err == nil {
+			if fi, err := os.Stat(dest); err != nil {
+				if os.IsNotExist(err) {
+					if err := os.MkdirAll(dest, mode); err != nil {
+						return err
+					}
+				} else {
+					return err
+				}
+			} else {
 				if fi.IsDir() {
 					os.Chmod(dest, mode)
 				} else {
@@ -138,12 +147,6 @@ func (p *Package) unpack(tarReader *tar.Reader, root string) error {
 						return err
 					}
 				}
-			} else if os.IsNotExist(err) {
-				if os.MkdirAll(dest, mode); err != nil {
-					return err
-				}
-			} else if err != nil {
-				return err
 			}
 		case tar.TypeReg:
 			// Perhaps it is far cleaner and smoother in my
@@ -251,7 +254,7 @@ func ReadSpec(sfile string) (*Spec, error) {
 	if specData, err := ioutil.ReadFile(sfile); err != nil {
 		return nil, fmt.Errorf("Couldn't read spec")
 	} else {
-		if err := json.Unmarshal(specData, &spec); err != nil {
+		if err := yaml.Unmarshal(specData, &spec); err != nil {
 			return nil, fmt.Errorf("Couldn't parse spec file: %v", err)
 		}
 		log.Printf("Spec input is as follows:\n\n%s\n", specData)
