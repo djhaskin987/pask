@@ -212,19 +212,9 @@ func (p *Package) Install(root string) error {
 		return err
 	}
 
-	if err := p.Run(root, "pretmpl"); err != nil {
+	/*if err := p.Run(root, "postinst"); err != nil {
 		return err
-	}
-
-	/*	if err := p.Template(); err != nil {
-		return err
-	} */
-
-	// TODO: Templating?
-
-	if err := p.Run(root, "postinst"); err != nil {
-		return err
-	}
+	}*/
 
 	return nil
 }
@@ -238,30 +228,38 @@ func (p *Package) Run(root string, task string) error {
 		p.Version, "tasks", task)
 	if _, err := os.Stat(exe); err != nil {
 		if os.IsNotExist(err) {
-			log.Printf("WARNING: No task `%s` for package `%s` at version `%s`\n",
+			// DO NOT ignore this
+			// All packages should perform the same task if the task
+			// is asked for
+			return fmt.Errorf("No task `%s` for package `%s` at version `%s`",
 				task, p.Name, p.Version)
-			// Ignore this when it happens :)
 		} else {
 			return err
 		}
 	} else {
 		log.Printf("Running task `%s` in package `%s` at version `%s`...\n",
 			task, p.Name, p.Version)
-		cmd := exec.Command(task)
+		cmd := exec.Command(exe)
 		var stdout bytes.Buffer
 		var stderr bytes.Buffer
 		cmd.Stdout = &stdout
 		cmd.Stderr = &stderr
+		itWorked := true
 		if err := cmd.Run(); err != nil {
-			log.Fatal(err)
+			log.Printf(fmt.Sprintf("Error running task `%s`: %s\n",
+				task, err))
+			itWorked = false
 		} else {
 			log.Println("Task run successful.")
-			if len(stdout.String()) > 0 {
-				log.Println("\tStandard Output:\n%s\n\n", stdout.String())
-			}
-			if len(stderr.String()) > 0 {
-				log.Println("\tStandard Error:\n%s\n\n", stderr.String())
-			}
+		}
+		if len(stdout.String()) > 0 {
+			log.Printf("\tStandard Output:\n%s\n\n", stdout.String())
+		}
+		if len(stderr.String()) > 0 {
+			log.Printf("\tStandard Error:\n%s\n\n", stderr.String())
+		}
+		if !itWorked {
+			os.Exit(1)
 		}
 	}
 	return nil

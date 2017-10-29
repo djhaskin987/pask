@@ -32,6 +32,8 @@ cat > pask/tasks/compile << COMPILE
 #!/bin/sh
 
 echo 'FIRE ONE!'
+echo 'FIRE ONE A!' >&2
+exit 1
 COMPILE
 chmod a+x pask/tasks/compile
 
@@ -95,6 +97,12 @@ then
     exit 1
 fi
 
+if [ ! -f "${reaally_long_path}/hi" ]
+then
+    echo "${reaally_long_path}/hi is not present" >&2
+    exit 1
+fi
+
 if [ ! -f "${install_path}/pask/packages/second/1.0/tasks/compile" ]
 then
     echo "${install_path}/pask/packages/second/1.0/tasks/compile is not present" >&2
@@ -104,15 +112,11 @@ fi
 # we make sure you can do it twice
 "${root_path}/pask" install
 
-if [ ! -f "${reallly_long_file}" ]
-then
-    echo "${reallly_long_file} is not present" >&2
-    exit 1
-fi
-
 if [ ! -f "${install_path}/pask/packages/second/1.0/tasks/compile" ]
 then
     echo "${install_path}/pask/packages/second/1.0/tasks/compile is not present" >&2
     exit 1
 fi
 
+
+"${root_path}/pask" run compile
