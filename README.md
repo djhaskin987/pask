@@ -1,4 +1,4 @@
-![Pask Logo](https://github.com/djhaskin987/pask/raw/develop/Pask.png)
+![Pask Logo](https://github.com/djhaskin987/pask/raw/develop/Pask.png =256x)
 
 Pask
 ====
