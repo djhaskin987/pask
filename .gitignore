@@ -1,6 +1,16 @@
 # Golang
 vendor/
 /pask
+/pask-linux-amd64
+/pask-darwin-amd64
+/pask-windows-x64.exe
+
+/docs/_build/
+/docs/_static/
+/docs/_template/
+/docs/_html/
+
+
 
 # Editor save files
 \#*
