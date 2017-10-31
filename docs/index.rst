@@ -7,6 +7,9 @@ Welcome to Pask's documentation!
 ================================
 
 .. image:: ../Pask.png
+   :height: 256px
+   :width: 256px
+
 
 .. toctree::
    Why Pask? <why-pask>

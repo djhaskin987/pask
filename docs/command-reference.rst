@@ -68,9 +68,8 @@ version.
 
 When `pask install` is run, this list of packages is installed in order of the
 list. Each package is simply a `XZ-compressed`_ `tarball`_ is downloaded and
-unpacked relative to the build project root. The build project root can be
-changed using Pask's  If any files are found in the archive under the folder
-`./pask`, those files are installed under
+unpacked relative to the build project root. If any files are found in the
+archive under the folder `./pask`, those files are installed under
 `./pask/packages/<package-name>/<package-version>/` relative to the build
 project root.
 
@@ -84,13 +83,14 @@ The command ``pask run`` has no command-specific options in the current
 version. 
 
 When `pask run <task>` is run, the file
-`./pask/packages/<package-name>/<package-version>/tasks/<task>` is run with no
-arguments for each package in the list found in the file `./pask/spec.yml`
-relative to the build project root. Any environment variables set when pask
-is run are passed through. If, for any of the packages in the list of the spec
-file, the named task does not exist, is not executable, or exits abnormally, an
-error is printed and pask stops. The task for each package in the list are run
-in the order that the packages found in the list.
+`./pask/packages/<package-name>/<package-version>/tasks/<task>` is assumed to
+be executable. It is run with no arguments for each package in the list found
+in the file `./pask/spec.yml` relative to the build project root. Any
+environment variables set when pask is run are passed through. If, for any of
+the packages in the list of the spec file, the named task does not exist, is
+not executable, or exits abnormally, an error is printed and pask stops. The
+task for each package in the list are run in the order that the packages found
+in the list.
 
 Compatibility with Degasolv
 ---------------------------
@@ -117,4 +117,4 @@ Then, Pask would run tasks associated with these tasks in order of dependance
 installed last), and will also run the tasks associated with those packages
 in order of dependance.
 
-.. _Degasolv: degasolv.readthedocs.io
+.. _Degasolv: https://degasolv.readthedocs.io
