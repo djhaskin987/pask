@@ -12,7 +12,6 @@ Welcome to Pask's documentation!
    Why Pask? <why-pask>
    Get Pask <get-pask>
    Quickstart <quickstart>
-   Detailed Explanation <detailed-explanation>
    Command Reference <command-reference>
    Changelog <changelog>
 
