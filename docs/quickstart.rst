@@ -6,7 +6,12 @@ Quickstart
     mkdir pkga
     cd pkga
     mkdir -p pask/tasks
-    echo 'echo compile task A' > pask/tasks/mytask
+    cat > pask/tasks/mytask << MYTASK
+    #!/bin/sh
+    
+    echo compile task A
+    MYTASK
+    chmod a+x pask/tasks/mytask
     mkdir files
     touch files/a
     tar cJf ../a-1.0.tar.xz $(ls -1A)
@@ -17,10 +22,15 @@ Quickstart
     mkdir pkgb
     cd pkgb
     mkdir -p pask/tasks
-    echo 'echo compile task B' > pask/tasks/mytask
+    cat > pask/tasks/mytask << MYTASK
+    #!/bin/sh
+    
+    echo compile task B
+    MYTASK
+    chmod a+x pask/tasks/mytask
     mkdir files
     touch files/b
-    tar cJf ../b-1.0.tar.xz $(ls -1A)
+    tar cJf ../b-1.3.tar.xz $(ls -1A)
     cd ..
 
 3. Write out a ``pask/spec.yml`` file relative to the root of your project::
