@@ -15,12 +15,8 @@ and this project adheres to `Semantic Versioning`_.
 
 Added
 +++++
+- Added `pask install`
+- Added `pask run`
+- Added root CLI
 
-Changed
-+++++++
-
-Fixed
-+++++
-
-
-.. _Unreleased: https://github.com/djhaskin987/pask/compare/1.10.0...HEAD
+.. _Unreleased: https://github.com/djhaskin987/pask/compare/157353fe0f5e8a07a82f2a24067240140989fc1f...HEAD

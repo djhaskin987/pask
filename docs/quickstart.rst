@@ -1,7 +1,7 @@
 Quickstart
 ==========
 
-1. Create a pask package called ``a`` with files in it:::
+1. Create a pask package called ``a`` with files in it::
 
     mkdir pkga
     cd pkga
